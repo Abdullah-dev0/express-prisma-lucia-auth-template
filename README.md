@@ -32,16 +32,16 @@ GOOGLE_CLIENT_ID=""
 
 GOOGLE_CLIENT_SECRET=""
 
-HOST_NAME="ABDULLAH"
+HOST_NAME=""
 # HOST_NAME="http://localhost:5173"
 
 
 
 # Node mailer 
 
-EMAIL_USER="challchutikrputtar@gmail.com"
-EMAIL_HOST="smtp.gmail.com" 
-EMAIL_PASS="emwcefuuwtwyughv"
+EMAIL_USER=""
+EMAIL_HOST="" 
+EMAIL_PASS=""
 
 ```
 
