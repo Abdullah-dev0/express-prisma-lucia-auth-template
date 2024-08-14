@@ -9,5 +9,5 @@ export const authRouter = express.Router();
 authRouter.use(sessionManagementMiddleware);
 
 authRouter.post("/signup", signUp);
-authRouter.post("/login", login);
+authRouter.post("/signin", login);
 authRouter.get("/logout", logout);

@@ -1,8 +1,8 @@
-import { emailVerificationCode } from "@prisma/client";
+import { emailVerificationCode, User } from "@prisma/client";
 import { isWithinExpirationDate } from "oslo";
 import { prisma } from "../../config/prismaClient.js";
 
-export async function verifyVerificationCode(user: emailVerificationCode | null, code: string): Promise<boolean> {
+export async function verifyVerificationCode(user: any, code: string): Promise<boolean> {
 	const databaseCode = await prisma.emailVerificationCode.findFirst({
 		where: {
 			user_id: user?.user_id,

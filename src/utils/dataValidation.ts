@@ -9,7 +9,7 @@ export const SignupData = z.object({
 });
 
 export const LoginData = z.object({
-	username: z.string().min(1, "email is required").trim().toLowerCase(),
+	email: z.string().email().min(1, "email is required").trim().toLowerCase(),
 	password: z.string().min(3, "Password must be at least 3 characters").trim(),
 });
 

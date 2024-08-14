@@ -8,6 +8,7 @@ import { githubRouter } from "./routes/auth/github.route.js";
 import { googleRouter } from "./routes/auth/google.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { cleanExpiredSessionJob, cleanExpiredTokensJob } from "./utils/job/index.js";
+import { emailRouter } from "./routes/email/emailValidation.route.js";
 
 export const app = express();
 
@@ -44,3 +45,9 @@ app.use("/login", githubRouter);
 app.use("/api", googleRouter);
 
 app.use("/api", userRouter);
+
+app.use("/api", emailRouter);
+
+app.use("*", (req, res) => {
+	res.status(404).json({ error: "Not found" });
+});

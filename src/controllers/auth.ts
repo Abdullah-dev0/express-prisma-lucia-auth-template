@@ -1,4 +1,8 @@
+// -------------------------------------
+
 // All the funcitons related to authentication are here login, signup, logout, github login, github callback, google login, google callback
+
+// -------------------------------------
 
 import { hash, verify } from "@node-rs/argon2";
 import { generateCodeVerifier, generateState, OAuth2RequestError } from "arctic";
@@ -38,12 +42,19 @@ export const signUp = async (req: Request, res: Response) => {
 	try {
 		const existingUser = await prisma.user.findFirst({
 			where: {
-				username: signupData.data.username,
+				OR: [
+					{
+						username: signupData.data.username,
+					},
+					{
+						email: signupData.data.email,
+					},
+				],
 			},
 		});
 
 		if (existingUser) {
-			return res.status(400).json({ error: "Username already used" });
+			return res.status(409).json({ error: "Username or email already Taken" });
 		}
 	} catch (error: any) {
 		console.log(error.message);
@@ -65,10 +76,14 @@ export const signUp = async (req: Request, res: Response) => {
 
 		const verificationCode = await generateEmailVerificationCode(user.id, user.email!);
 
-		await sendVerificationCode(user.email!, verificationCode, "email");
+		await sendVerificationCode(user.email!, verificationCode);
 
 		if (user) {
-			res.redirect("/email-verification");
+			const session = await lucia.createSession(user.id, {});
+			return res
+				.status(201)
+				.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
+				.redirect("/dashboard");
 		}
 
 		return res.status(400).json({ error: "Failed to create user" });
@@ -90,7 +105,7 @@ export const login = async (req: Request, res: Response) => {
 
 	const existingUser: User | null = await prisma.user.findFirst({
 		where: {
-			username: loginData.data.username,
+			email: loginData.data.email,
 		},
 	});
 
@@ -116,7 +131,6 @@ export const login = async (req: Request, res: Response) => {
 	res.setHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 	return res.status(200).json({
 		message: "Logged in successfully",
-		userData: existingUser,
 	});
 };
 
@@ -124,7 +138,7 @@ export const login = async (req: Request, res: Response) => {
 
 export const githubLogin = async (req: Request, res: Response) => {
 	if (res.locals.session) {
-		return res.status(200).json({ error: "You must be logged in to logout" }).end();
+		return res.status(200).json({ error: "You are login" }).end();
 	}
 
 	const state = generateState();
@@ -172,18 +186,38 @@ export const githubCallback = async (req: Request, res: Response) => {
 
 		const githubUser: User & Github = await githubUserResponse.json();
 
+		const registeredEmail = await prisma.user.findFirst({
+			where: {
+				email: githubUser.email,
+			},
+		});
+
+		if (registeredEmail) {
+			const errorMessage = encodeURIComponent("This email is already registered.");
+			return res.redirect(`/auth/sign-up?error=${errorMessage}`);
+		}
+
 		const existingUser = await prisma.account.findFirst({
 			where: {
 				providerAccountId: githubUser.id.toString(),
+			},
+			select: {
+				user: {
+					select: {
+						username: true,
+						email: true,
+					},
+				},
+				userId: true,
 			},
 		});
 
 		if (existingUser) {
 			const session = await lucia.createSession(existingUser.userId, {});
-
-			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-
-			return res.status(200).redirect("/");
+			return res
+				.status(201)
+				.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
+				.redirect("/dashboard");
 		}
 
 		const user = await prisma.user.create({
@@ -202,9 +236,10 @@ export const githubCallback = async (req: Request, res: Response) => {
 		});
 
 		const session = await lucia.createSession(user.id, {});
-		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
-
-		return res.status(200).redirect("/");
+		return res
+			.status(201)
+			.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize())
+			.redirect("/dashboard");
 	} catch (e) {
 		if (e instanceof OAuth2RequestError && e.message === "bad_verification_code") {
 			// invalid code
@@ -280,6 +315,17 @@ export const googleCallback = async (req: Request, res: Response) => {
 
 		const googleUser: User & GoogleUser = await response.json();
 
+		const registeredEmail = await prisma.user.findFirst({
+			where: {
+				email: googleUser.email,
+			},
+		});
+
+		if (registeredEmail) {
+			const errorMessage = encodeURIComponent("This email is already registered.");
+			return res.redirect(`/auth/sign-up?error=${errorMessage}`);
+		}
+
 		const existingUser = await prisma.account.findFirst({
 			where: {
 				providerAccountId: googleUser.sub,
@@ -291,7 +337,7 @@ export const googleCallback = async (req: Request, res: Response) => {
 
 			res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize());
 
-			return res.status(200).redirect("/");
+			return res.status(309).redirect("/dashboard");
 		}
 
 		const user = await prisma.user.create({
@@ -299,7 +345,7 @@ export const googleCallback = async (req: Request, res: Response) => {
 				username: googleUser.name,
 				email: googleUser.email,
 				avatar: googleUser.picture,
-				emailVerified: googleUser.emailVerified,
+				emailVerified: googleUser.email_verified,
 				Account: {
 					create: {
 						providerAccountId: googleUser.sub,
@@ -310,7 +356,7 @@ export const googleCallback = async (req: Request, res: Response) => {
 		});
 
 		const session = await lucia.createSession(user.id, {});
-		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize()).redirect("/");
+		res.appendHeader("Set-Cookie", lucia.createSessionCookie(session.id).serialize()).redirect("/dashboard");
 	} catch (e) {
 		if (e instanceof OAuth2RequestError && e.message === "bad_verification_code") {
 			// invalid code
@@ -332,6 +378,7 @@ export const logout = async (req: Request, res: Response) => {
 
 	return res
 		.setHeader("Set-Cookie", lucia.createBlankSessionCookie().serialize())
+		.status(200)
 		.json({
 			message: "Logged out successfully",
 		})
@@ -341,6 +388,8 @@ export const logout = async (req: Request, res: Response) => {
 interface Github {
 	login: string;
 	avatar_url: string;
+	email_verified: boolean;
+	github_id: number;
 }
 
 interface GoogleUser {
@@ -348,4 +397,5 @@ interface GoogleUser {
 	email: string;
 	name: string;
 	picture: string;
+	email_verified: boolean;
 }

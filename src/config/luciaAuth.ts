@@ -17,9 +17,8 @@ export const lucia = new Lucia(adapter, {
 
 	getUserAttributes: (attributes) => {
 		return {
-			githubId: attributes.github_id,
 			username: attributes.username,
-			emailVerified: attributes.email_verified,
+			emailVerified: attributes.emailVerified,
 			email: attributes.email,
 		};
 	},
@@ -29,14 +28,18 @@ export const lucia = new Lucia(adapter, {
 declare module "lucia" {
 	interface Register {
 		Lucia: typeof lucia;
-
 		DatabaseUserAttributes: DatabaseUserAttributes;
+		DatabaseAccountAttributes: DatabaseAccountAttributes;
 	}
 }
 
 interface DatabaseUserAttributes {
-	github_id: number;
 	username: string;
-	email_verified: boolean;
+	emailVerified: boolean;
 	email: string;
+}
+
+interface DatabaseAccountAttributes {
+	provider: string;
+	providerAccountId: string;
 }

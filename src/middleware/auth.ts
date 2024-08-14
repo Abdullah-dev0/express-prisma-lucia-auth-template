@@ -39,8 +39,12 @@ export async function sessionManagementMiddleware(req: Request, res: Response, n
 	}
 
 	res.locals.user = user;
-
 	res.locals.session = session;
+
+	if (!res.locals.session) {
+		return res.status(401).json({ error: "You must be logged in" }).end();
+	}
+
 	next();
 }
 
