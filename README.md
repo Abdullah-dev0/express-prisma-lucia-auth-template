@@ -16,7 +16,7 @@ This starter kit is designed to give you a head start when building applications
 - Email verification via code
 - Resend code option for better user experience
 
-##ENV 
+## env
 
 ```bash
 DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/postgres?sslmode=disable"
