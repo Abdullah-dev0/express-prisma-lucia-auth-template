@@ -16,6 +16,35 @@ This starter kit is designed to give you a head start when building applications
 - Email verification via code
 - Resend code option for better user experience
 
+##ENV 
+
+```bash
+DATABASE_URL="postgresql://postgres:mysecretpassword@localhost:5432/postgres?sslmode=disable"
+
+
+# Github
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+
+# Google
+
+GOOGLE_CLIENT_ID=""
+
+GOOGLE_CLIENT_SECRET=""
+
+HOST_NAME="ABDULLAH"
+# HOST_NAME="http://localhost:5173"
+
+
+
+# Node mailer 
+
+EMAIL_USER="challchutikrputtar@gmail.com"
+EMAIL_HOST="smtp.gmail.com" 
+EMAIL_PASS="emwcefuuwtwyughv"
+
+```
+
 ## Installation
 
 1. Clone the repository:
