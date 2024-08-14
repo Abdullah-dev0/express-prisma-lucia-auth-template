@@ -21,7 +21,7 @@ export const add = async (req: Request, res: Response) => {
 };
 
 export const getCurrentUser = async (req: Request, res: Response) => {
-	// Check if user is logged in for secuery reasons you will do in frontend anyway
+	// Check if user is logged in for security reasons you will do in frontend anyway
 	if (!res.locals.session) {
 		return res.status(401).json({ error: "You must be logged in" }).end();
 	}
