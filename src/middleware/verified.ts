@@ -4,7 +4,6 @@ export const verifiedEmail = async (req: Request, res: Response, next: NextFunct
 	if (!res.locals.session) {
 		return res.status(401).json({ error: "You must be logged in" });
 	}
-	console.log(res.locals.user);
 
 	if (!res.locals.user?.emailVerified) {
 		return res.status(403).json({ error: "Email not verified" });

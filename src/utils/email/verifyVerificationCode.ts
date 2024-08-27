@@ -1,3 +1,4 @@
+import { emailVerificationCode, User } from "@prisma/client";
 import { isWithinExpirationDate } from "oslo";
 import { prisma } from "../../config/prismaClient.js";
 
@@ -17,6 +18,7 @@ export async function verifyVerificationCode(user: any, code: string): Promise<b
 	}
 
 	if (databaseCode.email !== user!.email) {
+		console.log("email is incorrect");
 		return false;
 	}
 

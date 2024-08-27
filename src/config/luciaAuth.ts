@@ -1,6 +1,6 @@
 import { Lucia, TimeSpan } from "lucia";
 import { PrismaAdapter } from "@lucia-auth/adapter-prisma";
-import { prisma } from "../config/prismaClient.js";
+import { prisma } from "./prismaClient.js";
 
 //configration for lucia see the docs for more info https://lucia-auth.com/
 

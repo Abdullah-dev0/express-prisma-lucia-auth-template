@@ -9,6 +9,7 @@ import { googleRouter } from "./routes/auth/google.route.js";
 import { userRouter } from "./routes/user.route.js";
 import { cleanExpiredSessionJob, cleanExpiredTokensJob } from "./utils/job/index.js";
 import { emailRouter } from "./routes/email/emailValidation.route.js";
+import { snippetRouter } from "./routes/snippets.route.js";
 
 export const app = express();
 
@@ -47,6 +48,8 @@ app.use("/api", googleRouter);
 app.use("/api", userRouter);
 
 app.use("/api", emailRouter);
+
+app.use("/api", snippetRouter);
 
 app.use("*", (req, res) => {
 	res.status(404).json({ error: "Not found" });

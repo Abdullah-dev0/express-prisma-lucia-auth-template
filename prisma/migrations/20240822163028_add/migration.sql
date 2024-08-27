@@ -44,12 +44,17 @@ CREATE TABLE "Session" (
 );
 
 -- CreateTable
-CREATE TABLE "Post" (
+CREATE TABLE "Snippet" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "code" TEXT NOT NULL,
+    "language" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Snippet_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -68,4 +73,4 @@ ALTER TABLE "emailVerificationCode" ADD CONSTRAINT "emailVerificationCode_user_i
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Snippet" ADD CONSTRAINT "Snippet_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

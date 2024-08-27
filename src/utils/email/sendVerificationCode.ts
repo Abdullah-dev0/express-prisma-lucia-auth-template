@@ -39,8 +39,6 @@ export async function sendVerificationCode(to: string, code: string) {
             padding: 10px 20px;
             font-size: 24px;
             font-weight: bold;
-            color: #fff;
-            background-color: #007bff;
             border-radius: 4px;
             margin-top: 20px;
         }

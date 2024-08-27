@@ -1,6 +1,6 @@
 import cron from "node-cron";
 
-import { prisma } from "../../config//prismaClient.js";
+import { prisma } from "../../config/prismaClient.js";
 
 import { lucia } from "../../config/luciaAuth.js";
 

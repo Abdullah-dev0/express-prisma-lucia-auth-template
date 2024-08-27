@@ -26,9 +26,9 @@ model User {
   avatar                String?
   createdAt             DateTime               @default(now())
   sessions              Session[]
-  Post                  Post[]
   Account               Account[]
   emailVerificationCode emailVerificationCode?
+  Snippet               Snippet[]
 }
 
 model Account {
@@ -47,8 +47,7 @@ model emailVerificationCode {
   user_id    String   @unique
   email      String
   expires_at DateTime
-
-  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Session {
@@ -58,10 +57,14 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model Post {
-  id      String @id @default(cuid())
-  userId  String
-  message String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Snippet {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String
+  code        String
+  language    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
