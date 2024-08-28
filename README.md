@@ -16,6 +16,13 @@ This starter kit is designed to give you a head start when building applications
 - Email verification via code
 - Resend code option for better user experience
 
+
+## when building a image using Docker you need to add this To your package.json
+
+```
+"@node-rs/argon2-linux-x64-gnu": "^1.8.3",
+```
+
 ## env
 
 ```bash
