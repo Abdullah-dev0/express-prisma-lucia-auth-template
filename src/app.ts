@@ -40,11 +40,20 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRouter);
 
+//github login auth
+
 app.use("/login", githubRouter);
+
+
+//google auth login
 
 app.use("/api", googleRouter);
 
+//user Router to get user imfo
+
 app.use("/api", userRouter);
+
+// email route for verification 
 
 app.use("/api", emailRouter);
 
