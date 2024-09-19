@@ -64,6 +64,10 @@ export const emailVerification = async (req: Request, res: Response) => {
 export const resendVerification = async (req: Request, res: Response) => {
 	const { user } = res.locals;
 
+		if (res.locals.user?.emailVerified) {
+		return res.status(400).json({ error: "Email is already verified" });
+	}
+
 	// Find the user's email verification code
 
 	const existingUser = await prisma.user.findFirst({
