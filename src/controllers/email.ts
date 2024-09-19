@@ -7,6 +7,11 @@ import { sendVerificationCode } from "../utils/email/sendVerificationCode.js";
 import { verifyVerificationCode } from "../utils/email/verifyVerificationCode.js";
 
 export const emailVerification = async (req: Request, res: Response) => {
+
+	if (res.locals.user?.emailVerified) {
+		return res.status(400).json({ error: "Email is already verified" });
+	}
+	
 	try {
 		// Extract and validate the verification code from the request body
 		const code: string = req.body.pin;
